@@ -96,13 +96,13 @@ for link_oferta in link_ofertas:
     link = link_oferta.get_attribute('href')
     linklist.append(link)
 
-# Imprimir la lista de enlaces
-print(linklist)
 
 # Extraer el detalle de cada oferta 
 
 # Lista para almacenar los detalles y los roles
 detalles = []
+salarios = []
+ubicaciones = []
 
 # Itera sobre los enlaces
 for link in linklist:
@@ -130,11 +130,28 @@ for link in linklist:
         # Extrae el texto del elemento 'detalle_oferta'
         detalle = detalle_oferta.text.strip()
         
-        # Verifica que el texto no sea nulo o vacío antes de agregarlo a la lista
+        # Encuentra elementos que contienen 'Salary' y 'Location'
+        elements = driver.find_elements(By.XPATH, "//p[contains(text(), 'Salary:') or contains(text(), 'Location:')]")
+        
+        salario = 'No disponible'
+        ubicacion = 'No disponible'
+        
+        for element in elements:
+            text = element.text.strip()
+            if text.startswith('Salary:'):
+                salario = text[len('Salary:'):].strip()
+            elif text.startswith('Location:'):
+                ubicacion = text[len('Location:'):].strip()
+        
+        # Verifica que el texto de detalle no sea nulo o vacío antes de agregarlo a la lista
         if detalle:
             detalles.append(detalle)
         else:
             detalles.append('No disponible')
+        
+        # Agrega los valores de salario y ubicación a las listas correspondientes
+        salarios.append(salario)
+        ubicaciones.append(ubicacion)
         
     except Exception as e:
         print(f'Error al extraer detalle: {str(e)}')
@@ -146,13 +163,15 @@ for link in linklist:
 
 print(detalles)
 
-# genero el archio csv
+# # genero el archio csv
 
 empleo_final = pd.DataFrame(nombre_empleos,columns=['Nombre del Empleo'])
 compania_final = pd.DataFrame(nombre_compania,columns=[' Compañia'])
 detalles_final = pd.DataFrame(detalles,columns=['Detalle de la Oferta'])
+salario_final = pd.DataFrame(salarios,columns=['Salario'])
+ubicacion_final = pd.DataFrame(ubicaciones,columns=['Ubicacion'])
 
-Archivo = pd.concat([empleo_final,compania_final, detalles_final], axis=1)
+Archivo = pd.concat([empleo_final,compania_final, detalles_final,salario_final,ubicacion_final], axis=1)
 
 Archivo.to_csv('empleos.csv', index=False)
 
