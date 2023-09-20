@@ -13,7 +13,7 @@ import time
 # SOLO ES CAMBIAR LA URL POR LA QUE DESEES O QUE TE GENERE GOOGLE TRAS A VER REALIZADO UNA BUSQUEDA DE EMPLEO EN LINKEDIN Y EL TE HACE EL PROCESO DE EXTRACION DE OFERTAS
 
 
-url1 = 'https://www.linkedin.com/jobs/search/?currentJobId=3712610052&distance=25&f_C=91650798%2C28119221%2C18802834&f_E=2&f_WT=2&geoId=100876405&keywords=desarrollador%20web&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true'
+url1 = 'https://www.linkedin.com/jobs/search/?currentJobId=3712610052&distance=25&f_C=27153563%2C3110591%2C91650798%2C18802834%2C157349&f_E=2&f_WT=2%2C1&geoId=100876405&keywords=desarrollador%20web&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true'
 
 # Ruta al ejecutable de Microsoft Edge WebDriver
 edge_driver_path = r'C:\\Users\\Default\\Desktop\\msedgedriver.exe'
