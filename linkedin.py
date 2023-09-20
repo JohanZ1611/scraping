@@ -3,16 +3,14 @@
 from selenium import webdriver
 import time
 import pandas as pd
-import os
 
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 import time
 
-url1 = 'https://www.linkedin.com/jobs/search/?currentJobId=3704889841&keywords=desarrollador%20web'
+url1 = 'https://www.linkedin.com/jobs/search/?currentJobId=3657041027&distance=25&f_C=18846814%2C27153563&f_E=2%2C3&f_TPR=r604800&f_WT=2%2C1&geoId=100876405&keywords=desarrollador%20web&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true'
 
 # Ruta al ejecutable de Microsoft Edge WebDriver
 edge_driver_path = r'C:\\Users\\Default\\Desktop\\msedgedriver.exe'
@@ -30,7 +28,7 @@ driver = webdriver.Edge(service=service, options=edge_options)
 
 driver.get(url1)
 
-# Esperar 20 segundos antes de cerrar el navegador (puedes ajustar este tiempo según tus necesidades)
+# Esperar 10 segundos antes de cerrar el navegador (puedes ajustar este tiempo según tus necesidades)
 time.sleep(10)
 
 # Buscar elementos por clase
@@ -83,23 +81,84 @@ try:
 except IndexError:
     print('Fallo extraccion nombre de empleos')
 
-# Extraemos el enlace de la oferta de empleo
-# linklist = []
 
-# link_oferta = driver.find_element(By.CLASS_NAME, 'base-card__full-link').get_attribute('href')
+# Extraer los enlaces de las ofertas de empleo
+link_ofertas = driver.find_elements(By.CLASS_NAME, 'base-card__full-link')
 
-# for l in link_oferta:
-#     linklist.append(l)
+# Crear una lista para almacenar los enlaces
+linklist = []
 
-# print(linklist)
+# Iterar sobre los elementos y obtener los enlaces
+for link_oferta in link_ofertas:
+    link = link_oferta.get_attribute('href')
+    linklist.append(link)
 
+# Imprimir la lista de enlaces
+print(linklist)
+
+# Extraer el detalle de cada oferta 
+
+# Lista para almacenar los detalles y los roles
+detalles = []
+roles = []
+
+# Itera sobre los enlaces
+for link in linklist:
+
+    # Inicializa un nuevo controlador de Microsoft Edge para cada enlace
+    edge_driver_path = r'C:\\Users\\Default\\Desktop\\msedgedriver.exe'
+
+    # Configurar las opciones de Microsoft Edge
+    edge_options = Options()
+    # Puedes agregar más opciones si es necesario
+    edge_options.add_argument('--disable-extensions')
+
+    # Configurar el servicio de Microsoft Edge con la ruta al ejecutable de Microsoft Edge WebDriver
+    service = Service(executable_path=edge_driver_path)
+
+    # Inicializar el controlador de Microsoft Edge con las opciones y el servicio
+    driver = webdriver.Edge(service=service, options=edge_options)
+    
+    # Abre una nueva ventana o pestaña y navega a la URL
+    driver.get(link)
+    
+    try:
+        # Encuentra el elemento que contiene las etiquetas 'p'
+        detalle_oferta = driver.find_element(By.CLASS_NAME, 'show-more-less-html__markup')
+        
+        # Encuentra todas las etiquetas 'p' dentro del elemento
+        p_elements = detalle_oferta.find_elements(By.TAG_NAME, 'p')
+        
+        if len(p_elements) >= 2:
+            detalle = p_elements[0].text.strip()  # Elimina espacios en blanco al inicio y al final
+            rol = p_elements[1].text.strip()
+            
+            # Verifica que el texto no sea nulo o vacío antes de agregarlo a las listas
+            if detalle and rol:
+                detalles.append(detalle)
+                roles.append(rol)
+            else:
+                detalles.append('No disponible')
+                roles.append('No disponible')
+        else:
+            detalles.append('No disponible')
+            roles.append('No disponible')
+        
+    except Exception as e:
+        print(f'Error al extraer detalle o rol: {str(e)}')
+    
+    # Cierra el controlador actual (pestaña)
+    driver.quit()
 
 # genero el archio csv
 
-compania_final = pd.DataFrame(nombre_compania,columns=[' Compañia'])
 empleo_final = pd.DataFrame(nombre_empleos,columns=['Nombre del Empleo'])
+compania_final = pd.DataFrame(nombre_compania,columns=[' Compañia'])
+linklist_final = pd.DataFrame(linklist,columns=['Link de la Oferta'])
+detalles_final = pd.DataFrame(detalles,columns=['Detalle de la Oferta'])
+roles_final = pd.DataFrame(roles,columns=['Rol de la Oferta'])
 
-Archivo = empleo_final.join(compania_final)
+Archivo = pd.concat([empleo_final,compania_final, linklist_final, detalles_final, roles_final], axis=1)
 
 Archivo.to_csv('empleos.csv', index=False)
 
