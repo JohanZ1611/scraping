@@ -10,7 +10,7 @@ from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 import time
 
-url1 = 'https://www.linkedin.com/jobs/search/?currentJobId=3657041027&distance=25&f_C=18846814%2C27153563&f_E=2%2C3&f_TPR=r604800&f_WT=2%2C1&geoId=100876405&keywords=desarrollador%20web&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true'
+url1 = 'https://www.linkedin.com/jobs/search/?currentJobId=3716433278&distance=25&f_C=22306525%2C28119221&f_E=2%2C3&f_TPR=r604800&f_WT=2%2C1&geoId=100876405&keywords=desarrollador%20web&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true'
 
 # Ruta al ejecutable de Microsoft Edge WebDriver
 edge_driver_path = r'C:\\Users\\Default\\Desktop\\msedgedriver.exe'
@@ -146,6 +146,9 @@ for link in linklist:
         
     except Exception as e:
         print(f'Error al extraer detalle o rol: {str(e)}')
+
+
+    time.sleep(5)    
     
     # Cierra el controlador actual (pestaña)
     driver.quit()
