@@ -48,20 +48,20 @@ empleos_disponibles = int(pd.to_numeric(elements[0].text))
 
 #Recorro mediante scroll y ejecuto la accoin de ver mas para captrar la mayor cantidad posible de datos
 
-# contador = 2
+contador = 2
 
-# while contador <= 20:
-#     driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
-#     contador = contador + 1
+while contador <= 20:
+    driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+    contador = contador + 1
 
-#     try:
-#         seguir = driver.find_element(
-#             By.XPATH, '//button[@aria-label="Ver más empleos"]')
-#         driver.execute_script("arguments[0].click();", seguir)
-#         time.sleep(3)
-#     except:
-#         pass
-#         time.sleep(4)
+    try:
+        seguir = driver.find_element(
+            By.XPATH, '//button[@aria-label="Ver más empleos"]')
+        driver.execute_script("arguments[0].click();", seguir)
+        time.sleep(3)
+    except:
+        pass
+        time.sleep(4)
 
 #Extraigo los datos de las ofertas y las almaceno en una lista
 
@@ -83,20 +83,25 @@ try:
 except IndexError:
     print('Fallo extraccion nombre de empleos')
 
-# print(nombre_compania)
-# print(nombre_empleos)
+# Extraemos el enlace de la oferta de empleo
+# linklist = []
+
+# link_oferta = driver.find_element(By.CLASS_NAME, 'base-card__full-link').get_attribute('href')
+
+# for l in link_oferta:
+#     linklist.append(l)
+
+# print(linklist)
+
 
 # genero el archio csv
 
 compania_final = pd.DataFrame(nombre_compania,columns=[' Compañia'])
 empleo_final = pd.DataFrame(nombre_empleos,columns=['Nombre del Empleo'])
 
-Archivo = compania_final.join(empleo_final)
-
+Archivo = empleo_final.join(compania_final)
 
 Archivo.to_csv('empleos.csv', index=False)
-
-print(Archivo)
 
 
 # Cerrar el navegador
