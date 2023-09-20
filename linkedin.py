@@ -10,6 +10,9 @@ from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 import time
 
+#SOLO ES CAMBIAR LA URL POR LA QUE DESEES O QUE TE GENERE GOOGLE TRAS A VER REALIZADO UNA BUSQUEDA DE EMPLEO EN LINKEDIN Y EL TE HACE EL PROCESO DE EXTRACION DE OFERTAS
+
+
 url1 = 'https://www.linkedin.com/jobs/search/?currentJobId=3716433278&distance=25&f_C=22306525%2C28119221&f_E=2%2C3&f_TPR=r604800&f_WT=2%2C1&geoId=100876405&keywords=desarrollador%20web&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true'
 
 # Ruta al ejecutable de Microsoft Edge WebDriver
