@@ -103,22 +103,20 @@ print(linklist)
 
 # Lista para almacenar los detalles y los roles
 detalles = []
-roles = []
 
 # Itera sobre los enlaces
 for link in linklist:
-
     # Inicializa un nuevo controlador de Microsoft Edge para cada enlace
     edge_driver_path = r'C:\\Users\\Default\\Desktop\\msedgedriver.exe'
-
+    
     # Configurar las opciones de Microsoft Edge
     edge_options = Options()
     # Puedes agregar más opciones si es necesario
     edge_options.add_argument('--disable-extensions')
-
+    
     # Configurar el servicio de Microsoft Edge con la ruta al ejecutable de Microsoft Edge WebDriver
     service = Service(executable_path=edge_driver_path)
-
+    
     # Inicializar el controlador de Microsoft Edge con las opciones y el servicio
     driver = webdriver.Edge(service=service, options=edge_options)
     
@@ -126,45 +124,35 @@ for link in linklist:
     driver.get(link)
     
     try:
-        # Encuentra el elemento que contiene las etiquetas 'p'
+        # Encuentra el elemento que contiene el detalle
         detalle_oferta = driver.find_element(By.CLASS_NAME, 'show-more-less-html__markup')
         
-        # Encuentra todas las etiquetas 'p' dentro del elemento
-        p_elements = detalle_oferta.find_elements(By.TAG_NAME, 'p')
+        # Extrae el texto del elemento 'detalle_oferta'
+        detalle = detalle_oferta.text.strip()
         
-        if len(p_elements) >= 2:
-            detalle = p_elements[0].text.strip()  # Elimina espacios en blanco al inicio y al final
-            rol = p_elements[1].text.strip()
-            
-            # Verifica que el texto no sea nulo o vacío antes de agregarlo a las listas
-            if detalle and rol:
-                detalles.append(detalle)
-                roles.append(rol)
-            else:
-                detalles.append('No disponible')
-                roles.append('No disponible')
+        # Verifica que el texto no sea nulo o vacío antes de agregarlo a la lista
+        if detalle:
+            detalles.append(detalle)
         else:
             detalles.append('No disponible')
-            roles.append('No disponible')
         
     except Exception as e:
-        print(f'Error al extraer detalle o rol: {str(e)}')
-
-
-    time.sleep(5)    
+        print(f'Error al extraer detalle: {str(e)}')
+    
+    time.sleep(8)
     
     # Cierra el controlador actual (pestaña)
     driver.quit()
+
+print(detalles)
 
 # genero el archio csv
 
 empleo_final = pd.DataFrame(nombre_empleos,columns=['Nombre del Empleo'])
 compania_final = pd.DataFrame(nombre_compania,columns=[' Compañia'])
-linklist_final = pd.DataFrame(linklist,columns=['Link de la Oferta'])
 detalles_final = pd.DataFrame(detalles,columns=['Detalle de la Oferta'])
-roles_final = pd.DataFrame(roles,columns=['Rol de la Oferta'])
 
-Archivo = pd.concat([empleo_final,compania_final, linklist_final, detalles_final, roles_final], axis=1)
+Archivo = pd.concat([empleo_final,compania_final, detalles_final], axis=1)
 
 Archivo.to_csv('empleos.csv', index=False)
 
