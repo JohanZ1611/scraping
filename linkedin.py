@@ -68,6 +68,8 @@ while contador <= 20:
 
 nombre_compania = []
 nombre_empleos = []
+nombre_localizaciones = []
+tiempo_publicado = []
 
 try:
     companias = driver.find_elements(
@@ -79,9 +81,15 @@ try:
     for empleo in empleos:
         nombre_empleos.append(empleo.text)
 
+    localizacion = driver.find_elements(By.CLASS_NAME, 'job-search-card__location')
+    for loc in localizacion:
+        nombre_localizaciones.append(loc.text)
+
+    tiempo = driver.find_elements(By.CLASS_NAME, 'job-search-card__listdate')
+    for tim in tiempo:
+        tiempo_publicado.append(tim.text)
 except IndexError:
     print('Fallo extraccion nombre de compañias')
-
 
 # Extraer los enlaces de las ofertas de empleo
 link_ofertas = driver.find_elements(By.CLASS_NAME, 'base-card__full-link')
@@ -145,15 +153,17 @@ for link in linklist:
     # Cierra el controlador actual (pestaña)
     driver.quit()
 
-print(detalles)
+
 
 # # genero el archio csv
 
 empleo_final = pd.DataFrame(nombre_empleos,columns=['Nombre del Empleo'])
 compania_final = pd.DataFrame(nombre_compania,columns=[' Compañia'])
+localizacion_final = pd.DataFrame(nombre_localizaciones,columns=['Localizacion'])
+tiempo_final = pd.DataFrame(tiempo_publicado,columns=['Tiempo de Publicacion'])
 detalles_final = pd.DataFrame(detalles,columns=['Detalle de la Oferta'])
 
-Archivo = pd.concat([empleo_final,compania_final, detalles_final], axis=1)
+Archivo = pd.concat([empleo_final,compania_final, localizacion_final, tiempo_final,detalles_final], axis=1)
 
 Archivo.to_csv('empleos.csv', index=False)
 
