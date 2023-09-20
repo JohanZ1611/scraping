@@ -67,22 +67,19 @@ while contador <= 20:
 #Extraigo los datos de las ofertas y las almaceno en una lista
 
 nombre_compania = []
+nombre_empleos = []
 
 try:
     companias = driver.find_elements(By.CLASS_NAME, 'base-search-card__subtitle')
     for compania in companias:
         nombre_compania.append(compania.text)
-except IndexError:
-    print('Fallo extraccion nombre de compañias')
 
-nombre_empleos = []
-
-try:
     empleos = driver.find_elements(By.CLASS_NAME, 'base-search-card__title')
     for empleo in empleos:
         nombre_empleos.append(empleo.text)
+
 except IndexError:
-    print('Fallo extraccion nombre de empleos')
+    print('Fallo extraccion nombre de compañias')
 
 
 # Extraer los enlaces de las ofertas de empleo
@@ -96,13 +93,13 @@ for link_oferta in link_ofertas:
     link = link_oferta.get_attribute('href')
     linklist.append(link)
 
+# Imprimir la lista de enlaces
+print(linklist)
 
 # Extraer el detalle de cada oferta 
 
 # Lista para almacenar los detalles y los roles
 detalles = []
-salarios = []
-ubicaciones = []
 
 # Itera sobre los enlaces
 for link in linklist:
@@ -130,33 +127,16 @@ for link in linklist:
         # Extrae el texto del elemento 'detalle_oferta'
         detalle = detalle_oferta.text.strip()
         
-        # Encuentra elementos que contienen 'Salary' y 'Location'
-        elements = driver.find_elements(By.XPATH, "//p[contains(text(), 'Salary:') or contains(text(), 'Location:')]")
-        
-        salario = 'No disponible'
-        ubicacion = 'No disponible'
-        
-        for element in elements:
-            text = element.text.strip()
-            if text.startswith('Salary:'):
-                salario = text[len('Salary:'):].strip()
-            elif text.startswith('Location:'):
-                ubicacion = text[len('Location:'):].strip()
-        
-        # Verifica que el texto de detalle no sea nulo o vacío antes de agregarlo a la lista
+        # Verifica que el texto no sea nulo o vacío antes de agregarlo a la lista
         if detalle:
             detalles.append(detalle)
         else:
             detalles.append('No disponible')
         
-        # Agrega los valores de salario y ubicación a las listas correspondientes
-        salarios.append(salario)
-        ubicaciones.append(ubicacion)
-        
     except Exception as e:
         print(f'Error al extraer detalle: {str(e)}')
     
-    time.sleep(8)
+    time.sleep(5)
     
     # Cierra el controlador actual (pestaña)
     driver.quit()
@@ -168,10 +148,8 @@ print(detalles)
 empleo_final = pd.DataFrame(nombre_empleos,columns=['Nombre del Empleo'])
 compania_final = pd.DataFrame(nombre_compania,columns=[' Compañia'])
 detalles_final = pd.DataFrame(detalles,columns=['Detalle de la Oferta'])
-salario_final = pd.DataFrame(salarios,columns=['Salario'])
-ubicacion_final = pd.DataFrame(ubicaciones,columns=['Ubicacion'])
 
-Archivo = pd.concat([empleo_final,compania_final, detalles_final,salario_final,ubicacion_final], axis=1)
+Archivo = pd.concat([empleo_final,compania_final, detalles_final], axis=1)
 
 Archivo.to_csv('empleos.csv', index=False)
 
